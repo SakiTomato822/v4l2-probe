@@ -1,0 +1,24 @@
+name: build-probe
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r26d
+
+      - name: Build arm64 binary
+        run: |
+          $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang \
+            -O2 -o probe_v4l2 probe_v4l2.c
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: probe_v4l2_arm64
+          path: probe_v4l2
